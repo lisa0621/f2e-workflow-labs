@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/lisa0621/f2e-workflow-labs/issues"
   },
-  "homepage": "https://github.com/lisa0621/f2e-workflow-labs#readme"
+  "homepage": "https://github.com/lisa0621/f2e-workflow-labs#readme",
+  "devDependencies": {
+    "del": "^2.0.2",
+    "gulp": "^3.9.0"
+  }
 }
