@@ -1,5 +1,7 @@
 var gulp = require('gulp'); 
 
+var concat = require('gulp-concat');
+
 gulp.task('default', ['mytask1', 'mytask2'], function() {
 	 // place code for your default task here 
 	 console.log('Hi, Gulp !'); 
@@ -83,4 +85,13 @@ gulp.task('clean-app', function(cb){
 	
 	cb();
 
+});
+
+gulp.task('app', function() {
+	 gulp.src([
+		 'app/**/*.module.js',
+		 'app/**/*.js'
+	 ])
+    .pipe(concat('app.js'))
+    .pipe(gulp.dest('assets'));
 });
