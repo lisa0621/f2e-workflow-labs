@@ -52,7 +52,7 @@ gulp.task('clean1', function(){
 		console.log('Deleted files/folders:\n', paths.join('\n'));
 	});
 
-})
+});
 
 gulp.task('clean2', function(cb){
 	
@@ -62,4 +62,25 @@ gulp.task('clean2', function(cb){
 	
 	cb();
 
-})
+});
+
+gulp.task('watch', function() {
+	 // place code for your default task here 
+	 gulp.watch('app/**/*.js', ['output-app']);
+});
+
+gulp.task('output-app', ['clean-app'], function() {
+	 // place code for your default task here 
+	 gulp.src('app/**/*.js')
+	 	.pipe(gulp.dest('output-app'));
+});
+
+gulp.task('clean-app', function(cb){
+	
+	del(['output-app/', '!output-app']).then(function (paths) {
+		console.log('Deleted files/folders:\n', paths.join('\n'));
+	});
+	
+	cb();
+
+});
