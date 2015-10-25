@@ -1,9 +1,11 @@
 module.exports = { 
 	entry: {
    	  bundle: './main.js',
-      bundle2: './main2.js'
+      bundle2: './main2.js',
+      appModule: './app/app.module.js'
   	},
 	output: { 
+    path: __dirname + '/assets',
 		filename: '[name].js' 
 	} ,
   module: {
