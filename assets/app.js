@@ -43,25 +43,25 @@
 (function() {
     'use strict';
 
-    angular.module('app.layout', ['app.core']);
-})();
-
-(function() {
-    'use strict';
-
     angular.module('app.widgets', []);
 })();
 
 (function() {
     'use strict';
 
-    angular.module('blocks.exception', ['blocks.logger']);
+    angular.module('app.layout', ['app.core']);
 })();
 
 (function() {
     'use strict';
 
     angular.module('blocks.logger', []);
+})();
+
+(function() {
+    'use strict';
+
+    angular.module('blocks.exception', ['blocks.logger']);
 })();
 
 (function() {
@@ -311,6 +311,64 @@
     }
 })();
 
+(function () {
+    'use strict';
+
+    angular
+        .module('app.widgets')
+        .directive('htImgPerson', htImgPerson);
+
+    htImgPerson.$inject = ['config'];
+    /* @ngInject */
+    function htImgPerson (config) {
+        //Usage:
+        //<img ht-img-person="{{person.imageSource}}"/>
+        var basePath = config.imageBasePath;
+        var unknownImage = config.unknownPersonImageSource;
+        var directive = {
+            link: link,
+            restrict: 'A'
+        };
+        return directive;
+
+        function link(scope, element, attrs) {
+            attrs.$observe('htImgPerson', function (value) {
+                value = basePath + (value || unknownImage);
+                attrs.$set('src', value);
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.widgets')
+        .directive('htWidgetHeader', htWidgetHeader);
+
+    /* @ngInject */
+    function htWidgetHeader() {
+        //Usage:
+        //<div ht-widget-header title="vm.map.title"></div>
+        // Creates:
+        // <div ht-widget-header=""
+        //      title="Movie"
+        //      allow-collapse="true" </div>
+        var directive = {
+            scope: {
+                'title': '@',
+                'subtitle': '@',
+                'rightText': '@',
+                'allowCollapse': '@'
+            },
+            templateUrl: 'app/widgets/widget-header.html',
+            restrict: 'EA'
+        };
+        return directive;
+    }
+})();
+
 (function() {
     'use strict';
 
@@ -457,63 +515,53 @@
     }
 })();
 
-(function () {
-    'use strict';
-
-    angular
-        .module('app.widgets')
-        .directive('htImgPerson', htImgPerson);
-
-    htImgPerson.$inject = ['config'];
-    /* @ngInject */
-    function htImgPerson (config) {
-        //Usage:
-        //<img ht-img-person="{{person.imageSource}}"/>
-        var basePath = config.imageBasePath;
-        var unknownImage = config.unknownPersonImageSource;
-        var directive = {
-            link: link,
-            restrict: 'A'
-        };
-        return directive;
-
-        function link(scope, element, attrs) {
-            attrs.$observe('htImgPerson', function (value) {
-                value = basePath + (value || unknownImage);
-                attrs.$set('src', value);
-            });
-        }
-    }
-})();
-
 (function() {
     'use strict';
 
     angular
-        .module('app.widgets')
-        .directive('htWidgetHeader', htWidgetHeader);
+        .module('blocks.logger')
+        .factory('logger', logger);
+
+    logger.$inject = ['$log', 'toastr'];
 
     /* @ngInject */
-    function htWidgetHeader() {
-        //Usage:
-        //<div ht-widget-header title="vm.map.title"></div>
-        // Creates:
-        // <div ht-widget-header=""
-        //      title="Movie"
-        //      allow-collapse="true" </div>
-        var directive = {
-            scope: {
-                'title': '@',
-                'subtitle': '@',
-                'rightText': '@',
-                'allowCollapse': '@'
-            },
-            templateUrl: 'app/widgets/widget-header.html',
-            restrict: 'EA'
+    function logger($log, toastr) {
+        var service = {
+            showToasts: true,
+
+            error   : error,
+            info    : info,
+            success : success,
+            warning : warning,
+
+            // straight to console; bypass toastr
+            log     : $log.log
         };
-        return directive;
+
+        return service;
+        /////////////////////
+
+        function error(message, data, title) {
+            toastr.error(message, title);
+            $log.error('Error: ' + message, data);
+        }
+
+        function info(message, data, title) {
+            toastr.info(message, title);
+            $log.info('Info: ' + message, data);
+        }
+
+        function success(message, data, title) {
+            toastr.success(message, title);
+            $log.info('Success: ' + message, data);
+        }
+
+        function warning(message, data, title) {
+            toastr.warning(message, title);
+            $log.warn('Warning: ' + message, data);
+        }
     }
-})();
+}());
 
 // Include in index.html so that app level exceptions are handled.
 // Exclude from testRunner.html which should run exactly what it wants to run
@@ -613,54 +661,6 @@
         }
     }
 })();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('blocks.logger')
-        .factory('logger', logger);
-
-    logger.$inject = ['$log', 'toastr'];
-
-    /* @ngInject */
-    function logger($log, toastr) {
-        var service = {
-            showToasts: true,
-
-            error   : error,
-            info    : info,
-            success : success,
-            warning : warning,
-
-            // straight to console; bypass toastr
-            log     : $log.log
-        };
-
-        return service;
-        /////////////////////
-
-        function error(message, data, title) {
-            toastr.error(message, title);
-            $log.error('Error: ' + message, data);
-        }
-
-        function info(message, data, title) {
-            toastr.info(message, title);
-            $log.info('Info: ' + message, data);
-        }
-
-        function success(message, data, title) {
-            toastr.success(message, title);
-            $log.info('Success: ' + message, data);
-        }
-
-        function warning(message, data, title) {
-            toastr.warning(message, title);
-            $log.warn('Warning: ' + message, data);
-        }
-    }
-}());
 
 /* Help configure the state-base ui.router */
 (function() {

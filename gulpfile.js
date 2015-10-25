@@ -2,6 +2,9 @@ var gulp = require('gulp');
 
 var concat = require('gulp-concat');
 
+var uglify = require('gulp-uglify');
+var rename = require('gulp-rename');
+
 gulp.task('default', ['mytask1', 'mytask2'], function() {
 	 // place code for your default task here 
 	 console.log('Hi, Gulp !'); 
@@ -28,6 +31,7 @@ gulp.task('output1', function() {
 	 gulp.src('assets/vender/bootstrap/**/*.js')
 	 	.pipe(gulp.dest('output1'));
 });
+
 
 gulp.task('output2', ['clean1'], function() {
 	 // place code for your default task here 
@@ -92,6 +96,14 @@ gulp.task('app', function() {
 		 'app/**/*.module.js',
 		 'app/**/*.js'
 	 ])
+	.pipe(gulp.dest('assets/src'))
     .pipe(concat('app.js'))
+	.pipe(gulp.dest('assets'))
+	.pipe(uglify({
+		mangle: false
+	}))
+	.pipe(rename({
+		extname: '.min.js'
+	}))
     .pipe(gulp.dest('assets'));
 });
