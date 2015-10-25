@@ -8,6 +8,9 @@ var rename = require('gulp-rename');
 var minifyHTML = require('gulp-minify-html');
 var minifyCss = require('gulp-minify-css');
 
+var less = require('gulp-less');
+var path = require('path');
+
 gulp.task('default', ['mytask1', 'mytask2'], function() {
 	 // place code for your default task here 
 	 console.log('Hi, Gulp !'); 
@@ -135,4 +138,15 @@ gulp.task('minify-css', function() {
 		extname: '.min.css'
 	}))
     .pipe(gulp.dest('dist'));
+});
+
+gulp.task('less', function () {
+  	gulp.src('assets/styles.less')
+    .pipe(less())
+    .pipe(gulp.dest('less_to_css/'))
+	.pipe(minifyCss({compatibility: 'ie8'}))
+	.pipe(rename({
+		extname: '.min.css'
+	}))
+    .pipe(gulp.dest('less_to_css'));
 });
