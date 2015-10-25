@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/lisa0621/f2e-workflow-labs#readme",
   "devDependencies": {
+    "css-loader": "^0.21.0",
     "del": "^2.0.2",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
@@ -30,6 +31,10 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.4.2",
     "path": "^0.12.7",
+    "style-loader": "^0.13.0",
     "webpack": "^1.12.2"
+  },
+  "dependencies": {
+    "jquery": "^2.1.4"
   }
 }
