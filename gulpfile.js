@@ -11,6 +11,10 @@ var minifyCss = require('gulp-minify-css');
 var less = require('gulp-less');
 var path = require('path');
 
+var sourcemaps = require('gulp-sourcemaps');
+
+var config = require('./config');
+
 gulp.task('default', ['mytask1', 'mytask2'], function() {
 	 // place code for your default task here 
 	 console.log('Hi, Gulp !'); 
@@ -102,16 +106,18 @@ gulp.task('app', function() {
 		 'app/**/*.module.js',
 		 'app/**/*.js'
 	 ])
-	.pipe(gulp.dest('assets/src'))
+	.pipe(gulp.dest(config.assetsDir+'/src'))
+	.pipe(sourcemaps.init())
     .pipe(concat('app.js'))
-	.pipe(gulp.dest('assets'))
-	.pipe(uglify({
-		mangle: false
-	}))
+	.pipe(gulp.dest(config.assetsDir))
+	
+	.pipe(uglify(config.uglifyOptions))
 	.pipe(rename({
 		extname: '.min.js'
 	}))
-    .pipe(gulp.dest('assets'));
+	.pipe(sourcemaps.write('./'))
+	
+    .pipe(gulp.dest(config.assetsDir));
 });
 
 
@@ -132,8 +138,8 @@ gulp.task('minify-html', function() {
 
 
 gulp.task('minify-css', function() {
-  gulp.src('assets/styles.css')
-    .pipe(minifyCss({compatibility: 'ie8'}))
+  gulp.src(config.assetsDir+'/styles.css')
+    .pipe(minifyCss(config.cssOptions))
 	.pipe(rename({
 		extname: '.min.css'
 	}))
@@ -141,12 +147,15 @@ gulp.task('minify-css', function() {
 });
 
 gulp.task('less', function () {
-  	gulp.src('assets/styles.less')
+  	gulp.src(config.assetsDir+'/styles.less')
     .pipe(less())
     .pipe(gulp.dest('less_to_css/'))
-	.pipe(minifyCss({compatibility: 'ie8'}))
+	.pipe(minifyCss(config.cssOptions))
 	.pipe(rename({
 		extname: '.min.css'
 	}))
     .pipe(gulp.dest('less_to_css'));
 });
+
+
+
