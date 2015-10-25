@@ -1,6 +1,9 @@
 module.exports = { 
-	entry: './main.js', 
+	entry: {
+   	  bundle: './main.js',
+      bundle2: './main2.js'
+  	},
 	output: { 
-		filename: 'bundle.js' 
+		filename: '[name].js' 
 		} 
 };
