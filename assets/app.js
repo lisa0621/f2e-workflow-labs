@@ -20,6 +20,15 @@
 
 })();
 
+(function() {
+    'use strict';
+
+    angular.module('app.dashboard', [
+        'app.core',
+        'app.widgets'
+      ]);
+})();
+
 (function () {
     'use strict';
 
@@ -29,15 +38,6 @@
             'blocks.exception', 'blocks.logger', 'blocks.router',
             'ui.router', 'ngplus'
         ]);
-})();
-
-(function() {
-    'use strict';
-
-    angular.module('app.dashboard', [
-        'app.core',
-        'app.widgets'
-      ]);
 })();
 
 (function() {
@@ -61,16 +61,16 @@
 (function() {
     'use strict';
 
-    angular.module('blocks.logger', []);
+    angular.module('blocks.router', [
+        'ui.router',
+        'blocks.logger'
+    ]);
 })();
 
 (function() {
     'use strict';
 
-    angular.module('blocks.router', [
-        'ui.router',
-        'blocks.logger'
-    ]);
+    angular.module('blocks.logger', []);
 })();
 
 (function () {
@@ -120,6 +120,83 @@
                     settings: {
                         nav: 2,
                         content: '<i class="fa fa-lock"></i> Admin'
+                    }
+                }
+            }
+        ];
+    }
+})();
+
+(function () {
+    'use strict';
+
+    angular
+        .module('app.dashboard')
+        .controller('DashboardController', DashboardController);
+
+    DashboardController.$inject = ['$q', 'dataservice', 'logger'];
+    /* @ngInject */
+    function DashboardController($q, dataservice, logger) {
+        var vm = this;
+        vm.news = {
+            title: 'hottowel',
+            description: 'Hot Towel Angular is a SPA template for Angular developers.'
+        };
+        vm.messageCount = 0;
+        vm.people = [];
+        vm.title = 'Dashboard';
+
+        activate();
+
+        function activate() {
+            var promises = [getMessageCount(), getPeople()];
+            return $q.all(promises).then(function() {
+                logger.info('Activated Dashboard View');
+            });
+        }
+
+        function getMessageCount() {
+            return dataservice.getMessageCount().then(function (data) {
+                vm.messageCount = data;
+                return vm.messageCount;
+            });
+        }
+
+        function getPeople() {
+            return dataservice.getPeople().then(function (data) {
+                vm.people = data;
+                return vm.people;
+            });
+        }
+    }
+})();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('app.dashboard')
+        .run(appRun);
+
+    appRun.$inject = ['routerHelper'];
+    /* @ngInject */
+    function appRun(routerHelper) {
+        routerHelper.configureStates(getStates());
+    }
+
+    function getStates() {
+        return [
+            {
+                state: 'dashboard',
+                config: {
+                    url: '/',
+                    templateUrl: 'app/dashboard/dashboard.html',
+                    controller: 'DashboardController',
+                    controllerAs: 'vm',
+                    title: 'dashboard',
+                    settings: {
+                        nav: 1,
+                        content: '<i class="fa fa-dashboard"></i> Dashboard'
                     }
                 }
             }
@@ -231,83 +308,6 @@
                 return exception.catcher('XHR Failed for getPeople')(e);
             }
         }
-    }
-})();
-
-(function () {
-    'use strict';
-
-    angular
-        .module('app.dashboard')
-        .controller('DashboardController', DashboardController);
-
-    DashboardController.$inject = ['$q', 'dataservice', 'logger'];
-    /* @ngInject */
-    function DashboardController($q, dataservice, logger) {
-        var vm = this;
-        vm.news = {
-            title: 'hottowel',
-            description: 'Hot Towel Angular is a SPA template for Angular developers.'
-        };
-        vm.messageCount = 0;
-        vm.people = [];
-        vm.title = 'Dashboard';
-
-        activate();
-
-        function activate() {
-            var promises = [getMessageCount(), getPeople()];
-            return $q.all(promises).then(function() {
-                logger.info('Activated Dashboard View');
-            });
-        }
-
-        function getMessageCount() {
-            return dataservice.getMessageCount().then(function (data) {
-                vm.messageCount = data;
-                return vm.messageCount;
-            });
-        }
-
-        function getPeople() {
-            return dataservice.getPeople().then(function (data) {
-                vm.people = data;
-                return vm.people;
-            });
-        }
-    }
-})();
-
-(function() {
-    'use strict';
-
-    angular
-        .module('app.dashboard')
-        .run(appRun);
-
-    appRun.$inject = ['routerHelper'];
-    /* @ngInject */
-    function appRun(routerHelper) {
-        routerHelper.configureStates(getStates());
-    }
-
-    function getStates() {
-        return [
-            {
-                state: 'dashboard',
-                config: {
-                    url: '/',
-                    templateUrl: 'app/dashboard/dashboard.html',
-                    controller: 'DashboardController',
-                    controllerAs: 'vm',
-                    title: 'dashboard',
-                    settings: {
-                        nav: 1,
-                        content: '<i class="fa fa-dashboard"></i> Dashboard'
-                    }
-                }
-            }
-        ];
     }
 })();
 
@@ -614,54 +614,6 @@
     }
 })();
 
-(function() {
-    'use strict';
-
-    angular
-        .module('blocks.logger')
-        .factory('logger', logger);
-
-    logger.$inject = ['$log', 'toastr'];
-
-    /* @ngInject */
-    function logger($log, toastr) {
-        var service = {
-            showToasts: true,
-
-            error   : error,
-            info    : info,
-            success : success,
-            warning : warning,
-
-            // straight to console; bypass toastr
-            log     : $log.log
-        };
-
-        return service;
-        /////////////////////
-
-        function error(message, data, title) {
-            toastr.error(message, title);
-            $log.error('Error: ' + message, data);
-        }
-
-        function info(message, data, title) {
-            toastr.info(message, title);
-            $log.info('Info: ' + message, data);
-        }
-
-        function success(message, data, title) {
-            toastr.success(message, title);
-            $log.info('Success: ' + message, data);
-        }
-
-        function warning(message, data, title) {
-            toastr.warning(message, title);
-            $log.warn('Warning: ' + message, data);
-        }
-    }
-}());
-
 /* Help configure the state-base ui.router */
 (function() {
     'use strict';
@@ -763,3 +715,51 @@
         }
     }
 })();
+
+(function() {
+    'use strict';
+
+    angular
+        .module('blocks.logger')
+        .factory('logger', logger);
+
+    logger.$inject = ['$log', 'toastr'];
+
+    /* @ngInject */
+    function logger($log, toastr) {
+        var service = {
+            showToasts: true,
+
+            error   : error,
+            info    : info,
+            success : success,
+            warning : warning,
+
+            // straight to console; bypass toastr
+            log     : $log.log
+        };
+
+        return service;
+        /////////////////////
+
+        function error(message, data, title) {
+            toastr.error(message, title);
+            $log.error('Error: ' + message, data);
+        }
+
+        function info(message, data, title) {
+            toastr.info(message, title);
+            $log.info('Info: ' + message, data);
+        }
+
+        function success(message, data, title) {
+            toastr.success(message, title);
+            $log.info('Success: ' + message, data);
+        }
+
+        function warning(message, data, title) {
+            toastr.warning(message, title);
+            $log.warn('Warning: ' + message, data);
+        }
+    }
+}());
