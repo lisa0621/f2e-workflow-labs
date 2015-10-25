@@ -52,7 +52,12 @@ dist/
 *.css.map
 
 ### Custom ###
-assets/vender
+assets/vendor
 output*
 assets/app*
 assets/src
+assets/*.min.css
+*.min.html
+less_to_css
+bundle*
+tmp/

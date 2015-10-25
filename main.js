@@ -7,6 +7,9 @@ console.log('Hello little little SHA, ' + config.assetsDir);
 
 $(function(){
 	$('body').on('click', function(){
-		require('!style!css!./assets/styles.css');
+		require('./assets/styles.css');
+		
+		var picurl = require('./avatarpic-350.png');
+		$('#pic').append('<img src="'+picurl+'">')
 	});
 });
